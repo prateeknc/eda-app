@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 from tab_df.logics import data_info, column_info, data_sample
 from tab_df.display import display_data_info, display_column_info, display_data_sample
+from tab_numeric.logics import get_numeric_columns, numeric_column_info, num_value_frequency
+from tab_numeric.display import display_num_column, plot_histogram, display_frequent_values
 
 st.title("Exploratory Data Analysis")
 
@@ -32,10 +34,29 @@ with tab1:
 
     # section 3
     st.header("Explore Dataframe")
-
     # define user input widgets
     rows_to_display = st.slider("Select the number of rows to be displayed", 5, 50, 5)
     method = st.radio("Exploration Method", ["Head", "Tail", "Sample"])
 
     data_subset = data_sample(df, rows_to_display, method)
     display_data_sample(data_subset)
+
+with tab2:
+  if uploaded_data is not None:
+    # find numeric columns in the dataframe
+    num_cols = get_numeric_columns(df)
+    selected_num_col = st.selectbox("Which numeric column do you want to explore?", num_cols)
+
+    # section 1
+    st.header(f"{selected_num_col}")
+    num_col_info = numeric_column_info(df[selected_num_col])
+    display_num_column(num_col_info)
+
+    # section 2
+    st.header("Histogram")
+    plot_histogram(df, selected_num_col)
+
+    # section 3
+    st.header("Most Frequent Values")
+    freq_df = num_value_frequency(df, selected_num_col)
+    display_frequent_values(freq_df)
