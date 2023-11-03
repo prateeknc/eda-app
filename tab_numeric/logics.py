@@ -22,10 +22,8 @@ def numeric_column_info(col):
 
 def num_value_frequency(dataframe, column):
     # find top 20 most frequent values
-    value_counts = dataframe[column].value_counts()[:20]
-
-    df_freq = pd.DataFrame({'value': value_counts.index, 'occurence': value_counts.values})
-
+    value_counts = dataframe[column].value_counts()
+    df_freq = pd.DataFrame({'value': value_counts.index, 'occurence': value_counts.values})[:20]
     df_freq['percentage'] = (df_freq['occurence'] / len(dataframe))*100
 
     return df_freq

@@ -4,12 +4,16 @@ from tab_df.logics import data_info, column_info, data_sample
 from tab_df.display import display_data_info, display_column_info, display_data_sample
 from tab_numeric.logics import get_numeric_columns, numeric_column_info, num_value_frequency
 from tab_numeric.display import display_num_column, plot_histogram, display_frequent_values
+from tab_text.logics import get_text_columns, text_column_info, text_value_frequency
+from tab_text.display import display_text_column, barchart, frequent_text_values
 
 st.title("Exploratory Data Analysis")
 
 @st.cache_data
 def load_data(file_name):
-  return pd.read_csv(file_name)
+  data = pd.read_csv(file_name)
+  data['Date'] = pd.to_datetime(data['Date'])
+  return data
 
 st.sidebar.title("Upload Data")
 uploaded_data = st.sidebar.file_uploader("Choose a CSV file")
@@ -60,3 +64,23 @@ with tab2:
     st.header("Most Frequent Values")
     freq_df = num_value_frequency(df, selected_num_col)
     display_frequent_values(freq_df)
+
+with tab3:
+  if uploaded_data is not None:
+    # find numeric columns in the dataframe
+    text_cols = get_text_columns(df)
+    selected_text_col = st.selectbox("Which text column do you want to explore?", text_cols)
+
+    # section 1
+    st.header(f"{selected_text_col}")
+    text_col_info = text_column_info(df[selected_text_col])
+    display_text_column(text_col_info)
+
+    # section 2
+    st.header("Bar Chart")
+    barchart(df, selected_text_col)
+
+    # section 3
+    st.header("Most Frequent Values")
+    freq_df = text_value_frequency(df, selected_text_col)
+    frequent_text_values(freq_df)
