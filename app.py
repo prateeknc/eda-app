@@ -6,12 +6,16 @@ from tab_numeric.logics import get_numeric_columns, numeric_column_info, num_val
 from tab_numeric.display import display_num_column, plot_histogram, display_frequent_values
 from tab_text.logics import get_text_columns, text_column_info, text_value_frequency
 from tab_text.display import display_text_column, barchart, frequent_text_values
+from tab_date.logics import get_date_columns, date_column_info, date_value_frequency
+from tab_date.display import display_date_column, date_barchart, frequent_date_values
 
 st.title("Exploratory Data Analysis")
 
 @st.cache_data
 def load_data(file_name):
+  # read CSV file
   data = pd.read_csv(file_name)
+  # change date columns datatype to "datetime"
   data['Date'] = pd.to_datetime(data['Date'])
   return data
 
@@ -62,12 +66,12 @@ with tab2:
 
     # section 3
     st.header("Most Frequent Values")
-    freq_df = num_value_frequency(df, selected_num_col)
-    display_frequent_values(freq_df)
+    freq_num_df = num_value_frequency(df, selected_num_col)
+    display_frequent_values(freq_num_df)
 
 with tab3:
   if uploaded_data is not None:
-    # find numeric columns in the dataframe
+    # find text columns in the dataframe
     text_cols = get_text_columns(df)
     selected_text_col = st.selectbox("Which text column do you want to explore?", text_cols)
 
@@ -82,5 +86,25 @@ with tab3:
 
     # section 3
     st.header("Most Frequent Values")
-    freq_df = text_value_frequency(df, selected_text_col)
-    frequent_text_values(freq_df)
+    freq_text_df = text_value_frequency(df, selected_text_col)
+    frequent_text_values(freq_text_df)
+
+with tab4:
+  if uploaded_data is not None:
+    # find datetime columns in the dataframe
+    date_cols = get_date_columns(df)
+    selected_date_col = st.selectbox("Which datetime column do you want to explore?", date_cols)
+
+    # section 1
+    st.header(f"{selected_date_col}")
+    date_col_info = date_column_info(df[selected_date_col])
+    display_date_column(date_col_info)
+    
+    # section 2
+    st.header("Bar Chart")
+    date_barchart(df, selected_date_col)
+
+    # section 3
+    st.header("Most Frequent Values")
+    freq_date_df = date_value_frequency(df, selected_date_col)
+    frequent_date_values(freq_date_df)

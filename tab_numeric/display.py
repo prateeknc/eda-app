@@ -8,7 +8,7 @@ def display_num_column(col_info):
 
 def plot_histogram(dataframe, col_name):
     hist = alt.Chart(dataframe).mark_bar().encode(x = col_name, y = 'count()') 
-    st.altair_chart(hist)
+    st.altair_chart(hist, use_container_width=True)
 
 def display_frequent_values(dataframe):
     st.dataframe(dataframe)
